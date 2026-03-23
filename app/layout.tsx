@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Callum Moodie | Developer & Musician",
+  title: "Callum Moodie | Developer",
   description:
     "Graduate Apprentice Analyst/Developer at the University of Glasgow. Software engineering, travel, and music.",
 };

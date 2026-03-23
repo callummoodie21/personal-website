@@ -28,15 +28,24 @@ function TimelineEntry({
           isLeft ? "md:text-right" : ""
         }`}
       >
-        <span
-          className={`mb-2 inline-block rounded-full px-3 py-1 text-xs font-medium ${
-            isWork
-              ? "bg-cyan/10 text-cyan"
-              : "bg-purple/10 text-purple"
-          }`}
-        >
-          {isWork ? "Work" : "Education"}
-        </span>
+        <div className={`mb-3 flex items-center gap-3 ${isLeft ? "md:justify-end" : ""}`}>
+          <img
+            src="/uofg.png"
+            alt="University of Glasgow"
+            className="h-15 w-30 object-contain"
+          />
+          <div className={isLeft ? "md:text-right" : ""}>
+            <span
+              className={`inline-block rounded-full px-3 py-1 text-xs font-medium ${
+                isWork
+                  ? "bg-cyan/10 text-cyan"
+                  : "bg-purple/10 text-purple"
+              }`}
+            >
+              {isWork ? "Work" : "Education"}
+            </span>
+          </div>
+        </div>
         <h3 className="mb-1 text-lg font-semibold text-foreground">
           {entry.title}
         </h3>

@@ -8,7 +8,7 @@ export const projects: Project[] = [
     tags: ["React Native", "TypeScript", "Azure AD", "MSAL"],
   },
   {
-    title: "Moodle–UofG Life Integration",
+    title: "Moodle-UofG Life Integration",
     description:
       "Built an integration layer between Moodle and the UofG Life hybrid app, giving students quick access to course content and deadlines. Created reusable Vue.js components for course lists, deadlines, and assessment info.",
     tags: ["Java Spring", "SQL", "Vue.js", "JavaScript"],

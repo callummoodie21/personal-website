@@ -45,7 +45,7 @@ function GuitarStrings() {
       <div className="absolute top-1/2 left-[40%] h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/10" />
       <div className="absolute top-1/2 left-[80%] h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/10" />
 
-      {/* Strings — tightly grouped like a real neck */}
+      {/* Strings - tightly grouped like a real neck */}
       {guitarStrings.map((s, i) => (
         <motion.div
           key={i}
@@ -155,6 +155,18 @@ export default function HeroSection() {
           Graduate Apprentice Analyst/Developer
           <br />
           <span className="text-foreground/40">University of Glasgow</span>
+          <br />
+          <span className="inline-flex items-center gap-2 text-base text-foreground/40 mt-1">
+            <span>20</span>
+            <span className="text-foreground/20">|</span>
+            <span className="inline-flex items-center gap-1.5">
+              Scotland
+              <svg width="20" height="14" viewBox="0 0 20 14" className="inline-block rounded-sm overflow-hidden">
+                <rect width="20" height="14" fill="#005EB8" />
+                <path d="M0 0L20 14M20 0L0 14" stroke="white" strokeWidth="2.5" />
+              </svg>
+            </span>
+          </span>
         </motion.p>
 
         {/* Bio */}
@@ -163,7 +175,7 @@ export default function HeroSection() {
           className="mx-auto mb-10 max-w-xl text-foreground/50 leading-relaxed"
         >
           Final year software engineering student building production software
-          used by 20,000+ people. I love building things that people find useful. When I&apos;m not shipping features,
+          used by 20,000+ people. I love building things that people find useful. When I&apos;m not writing code,
           you&apos;ll find me playing guitar, exploring a new city, or having a pint.
         </motion.p>
 

@@ -337,23 +337,23 @@ export const travelData: TravelData = {
       country: "Germany",
       coordinates: [11.582, 48.1351],
       images: [
-        "/img/germany/nb1.jpg",
-        "/img/germany/nb2.jpg",
-        "/img/germany/nb3.jpg",
-        "/img/germany/nb4.jpg",
-      ]
+        "/img/germany/mu1.jpg",
+        "/img/germany/mu2.jpg",
+        "/img/germany/mu3.jpg",
+        "/img/germany/mu4.jpg",
+        "/img/germany/mu5.jpg",
+      ],
+      
     },
     {
       name: "Nuremberg",
       country: "Germany",
       coordinates: [11.0767, 49.4521],
       images: [
-        "/img/germany/m1.jpg",
-        "/img/germany/m2.jpg",
-        "/img/germany/m3.jpg",
-        "/img/germany/m4.jpg",
-        "/img/germany/m5.jpg",
-      ],
+        "/img/germany/nb1.jpg",
+        "/img/germany/nb2.jpg",
+        "/img/germany/nb3.jpg",
+      ]
     },
   ],
 };

@@ -19,10 +19,10 @@ function ProjectCard({ project, index }: { project: (typeof projects)[0]; index:
         style={{
           background: `linear-gradient(90deg, ${
             index % 3 === 0
-              ? "#fdcf58, #ff6b35"
+              ? "#a7f3d0, #6ee7b7"
               : index % 3 === 1
-              ? "#ff6b35, #ff0040"
-              : "#ff0040, #fdcf58"
+              ? "#6ee7b7, #c4b5fd"
+              : "#c4b5fd, #93c5fd"
           })`,
         }}
       />

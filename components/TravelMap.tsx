@@ -61,7 +61,7 @@ export default function TravelMap() {
             <span className="gradient-text">Travel</span>
           </h2>
           <p className="text-foreground/50">
-            Places I&apos;ve explored. Click a city marker to see photos.
+            Places I&apos;ve explored. Click a city marker to see pics I&apos;ve taken.
           </p>
         </motion.div>
 
@@ -86,7 +86,7 @@ export default function TravelMap() {
                       <Geography
                         key={geo.rsmKey}
                         geography={geo}
-                        fill={isVisited ? "#ffa200" : "#1a1a2e"}
+                        fill={isVisited ? "#6ee7b7" : "#1a1a2e"}
                         stroke="#2a2a3e"
                         strokeWidth={0.5}
                         style={{
@@ -95,7 +95,7 @@ export default function TravelMap() {
                             transition: "fill 0.3s",
                           },
                           hover: {
-                            fill: isVisited ? "#fdcf58" : "#252540",
+                            fill: isVisited ? "#a7f3d0" : "#252540",
                             outline: "none",
                             cursor: isVisited ? "pointer" : "default",
                           },
@@ -119,7 +119,7 @@ export default function TravelMap() {
                   <g style={{ cursor: city.images.length > 0 ? "pointer" : "default" }}>
                     <circle
                       r={2.5}
-                      fill="#ff0040"
+                      fill="#c4b5fd"
                       stroke="#0a0a0a"
                       strokeWidth={1}
                       opacity={0.9}

@@ -21,7 +21,7 @@ function EqBars() {
       {[0, 1, 2, 3].map((i) => (
         <motion.div
           key={i}
-          className="w-[3px] rounded-full bg-[#ff6b35]"
+          className="w-[3px] rounded-full bg-[#6ee7b7]"
           animate={{ height: ["40%", "100%", "60%", "100%", "40%"] }}
           transition={{
             duration: 0.8 + i * 0.15,
@@ -76,7 +76,7 @@ function VinylDisc({ albumArt, isPlaying }: { albumArt?: string; isPlaying: bool
       {/* Outer glow */}
       <div
         className="absolute inset-0 rounded-full blur-2xl opacity-20"
-        style={{ background: "radial-gradient(circle, #ff6b35, transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, #c4b5fd, transparent 70%)" }}
       />
 
       {/* Spinning disc */}
@@ -122,7 +122,7 @@ function VinylDisc({ albumArt, isPlaying }: { albumArt?: string; isPlaying: bool
           }}
         />
 
-        {/* Label — album art or gradient fallback */}
+        {/* Label - album art or gradient fallback */}
         <div
           className="absolute left-1/2 top-1/2 overflow-hidden rounded-full"
           style={{
@@ -142,7 +142,7 @@ function VinylDisc({ albumArt, isPlaying }: { albumArt?: string; isPlaying: bool
             <div
               className="h-full w-full flex items-center justify-center"
               style={{
-                background: "radial-gradient(circle, #fdcf58, #ff6b35 60%, #ff0040 100%)",
+                background: "radial-gradient(circle, #a7f3d0, #6ee7b7 60%, #c4b5fd 100%)",
               }}
             >
               <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-[#0a0a0a]/70">
@@ -279,7 +279,7 @@ export default function NowPlaying() {
                 {isPlaying ? (
                   <motion.div
                     className="h-full rounded-full"
-                    style={{ background: "linear-gradient(90deg, #ff6b35, #fdcf58)" }}
+                    style={{ background: "linear-gradient(90deg, #6ee7b7, #c4b5fd)" }}
                     initial={{ width: "15%" }}
                     animate={{ width: "85%" }}
                     transition={{ duration: 30, ease: "linear" }}
@@ -287,7 +287,7 @@ export default function NowPlaying() {
                 ) : (
                   <div
                     className="h-full w-full rounded-full"
-                    style={{ background: "linear-gradient(90deg, #ff6b35, #fdcf58)" }}
+                    style={{ background: "linear-gradient(90deg, #6ee7b7, #c4b5fd)" }}
                   />
                 )}
               </div>

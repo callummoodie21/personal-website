@@ -69,7 +69,8 @@ export default function CustomCursor() {
           x: dotX,
           y: dotY,
           translateX: "-50%",
-          translateY: "-40%",
+          translateY: "-95%",
+          transformOrigin: "50% 95%",
           opacity: visible ? 1 : 0,
         }}
         animate={{

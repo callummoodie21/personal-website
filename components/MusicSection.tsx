@@ -19,7 +19,7 @@ export default function MusicSection() {
               <span className="gradient-text">Music</span>
             </h2>
             <p className="mb-6 text-foreground/50">
-              I&apos;ve played guitar for years, mainly taking inspiration from my dad and my papa, as well as a variety of artists.
+              I&apos;ve played guitar for years, mainly taking inspiration from my dad and grandfather, as well as a variety of artists.
             </p>
 
             <div className="space-y-4 text-foreground/60">

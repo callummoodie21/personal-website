@@ -10,7 +10,7 @@ export const resumeEntries: ResumeEntry[] = [
     type: "work",
   },
   {
-    title: "BSc Software Engineering (Predicted First-Class Honours)",
+    title: "BSc Software Engineering (First-Class Honours)",
     organization: "University of Glasgow",
     period: "Oct. 2022 - Jun. 2026",
     description:

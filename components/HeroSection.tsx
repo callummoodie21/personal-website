@@ -1,51 +1,234 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { animate, motion, useMotionValue } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
 const guitarStrings = [
-  { thickness: 0.5, color: "#a7f3d0", vibration: 1.5 },
-  { thickness: 0.75, color: "#6ee7b7", vibration: 1.8 },
-  { thickness: 1, color: "#93c5fd", vibration: 2.2 },
-  { thickness: 1.5, color: "#c4b5fd", vibration: 2.6 },
-  { thickness: 2, color: "#ddd6fe", vibration: 3.0 },
-  { thickness: 2.5, color: "#c4b5fd", vibration: 3.5 },
+  { thickness: 0.75, color: "#a7f3d0", vibration: 12, symbol: "♪" },
+  { thickness: 1, color: "#6ee7b7", vibration: 14, symbol: "♫" },
+  { thickness: 1.5, color: "#93c5fd", vibration: 17, symbol: "♪" },
+  { thickness: 2, color: "#c4b5fd", vibration: 20, symbol: "♬" },
+  { thickness: 2.5, color: "#ddd6fe", vibration: 24, symbol: "♫" },
+  { thickness: 3, color: "#c4b5fd", vibration: 28, symbol: "♪" },
 ];
 
-function GuitarStrings() {
+interface FloatingNote {
+  id: number;
+  x: number;
+  y: number;
+  symbol: string;
+  color: string;
+  drift: number;
+  tilt: number;
+}
+
+function GuitarString({
+  index,
+  config,
+  pluckSignal,
+}: {
+  index: number;
+  config: (typeof guitarStrings)[number];
+  pluckSignal: number;
+}) {
+  const y = useMotionValue(0);
+  const glow = useMotionValue(0);
+  const top = 30 + index * 8;
+
+  useEffect(() => {
+    if (pluckSignal === 0) return;
+    const v = config.vibration;
+    animate(y, [0, v, -v * 0.7, v * 0.45, -v * 0.25, v * 0.12, 0], {
+      duration: 0.9,
+      ease: "easeOut",
+    });
+    animate(glow, [1, 0.7, 0.4, 0.2, 0], { duration: 1.1, ease: "easeOut" });
+  }, [pluckSignal, config.vibration, y, glow]);
+
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-[0.07]">
-      {[25, 45, 65, 85].map((left) => (
-        <div
-          key={left}
-          className="absolute top-0 bottom-0 w-px bg-white/20"
-          style={{ left: `${left}%` }}
-        />
-      ))}
+    <motion.div
+      className="absolute left-0 right-0 rounded-full"
+      style={{
+        top: `${top}%`,
+        height: `${config.thickness}px`,
+        background: `linear-gradient(90deg, transparent, ${config.color}90, ${config.color}, ${config.color}90, transparent)`,
+        boxShadow: `0 0 8px ${config.color}40`,
+        y,
+        opacity: 0.22,
+      }}
+      initial={{ scaleX: 0 }}
+      animate={{ scaleX: 1 }}
+      transition={{ duration: 1.4, delay: 1.4 + index * 0.08, ease: "easeOut" }}
+    >
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{
+          background: `linear-gradient(90deg, transparent, ${config.color}, transparent)`,
+          opacity: glow,
+          filter: "blur(2px)",
+        }}
+      />
+    </motion.div>
+  );
+}
+
+function InteractiveGuitarStrings() {
+  const [plucks, setPlucks] = useState<number[]>(() => guitarStrings.map(() => 0));
+  const [notes, setNotes] = useState<FloatingNote[]>([]);
+  const noteIdRef = useRef(0);
+  const lastYRef = useRef<number | null>(null);
+  const lastPluckTimes = useRef<number[]>(guitarStrings.map(() => 0));
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      const newY = e.clientY;
+      const last = lastYRef.current;
+      lastYRef.current = newY;
+      if (last === null) return;
+
+      const now = performance.now();
+      guitarStrings.forEach((s, i) => {
+        const stringY = ((30 + i * 8) / 100) * window.innerHeight;
+        const crossed =
+          (last < stringY && newY >= stringY) ||
+          (last > stringY && newY <= stringY);
+        if (!crossed) return;
+        if (now - lastPluckTimes.current[i] < 120) return;
+        lastPluckTimes.current[i] = now;
+
+        setPlucks((p) => {
+          const next = [...p];
+          next[i] = next[i] + 1;
+          return next;
+        });
+        const id = ++noteIdRef.current;
+        const note: FloatingNote = {
+          id,
+          x: e.clientX,
+          y: stringY,
+          symbol: s.symbol,
+          color: s.color,
+          drift: (Math.random() - 0.5) * 80,
+          tilt: (Math.random() - 0.5) * 40,
+        };
+        setNotes((n) => [...n, note]);
+        window.setTimeout(
+          () => setNotes((n) => n.filter((nn) => nn.id !== id)),
+          1800
+        );
+      });
+    };
+    window.addEventListener("mousemove", handler);
+    return () => window.removeEventListener("mousemove", handler);
+  }, []);
+
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      {/* Frets */}
+      <div className="absolute inset-0 opacity-[0.05]">
+        {[15, 35, 55, 75, 95].map((left) => (
+          <div
+            key={left}
+            className="absolute top-0 bottom-0 w-px bg-white"
+            style={{ left: `${left}%` }}
+          />
+        ))}
+      </div>
+
+      {/* Strings */}
       {guitarStrings.map((s, i) => (
+        <GuitarString key={i} index={i} config={s} pluckSignal={plucks[i]} />
+      ))}
+
+      {/* Floating musical notes */}
+      {notes.map((note) => (
         <motion.div
-          key={i}
-          className="absolute left-0 right-0 rounded-full"
+          key={note.id}
+          className="absolute select-none text-2xl font-bold"
           style={{
-            top: `${30 + i * 8}%`,
-            height: `${s.thickness}px`,
-            background: `linear-gradient(90deg, transparent, ${s.color}60, ${s.color}, ${s.color}60, transparent)`,
+            left: note.x,
+            top: note.y,
+            color: note.color,
+            textShadow: `0 0 14px ${note.color}, 0 0 28px ${note.color}80`,
+            willChange: "transform, opacity",
           }}
-          initial={{ scaleX: 0 }}
+          initial={{ opacity: 0, y: 0, x: 0, scale: 0.4, rotate: 0 }}
           animate={{
-            scaleX: 1,
-            y: [0, s.vibration, -s.vibration * 0.6, 0],
+            opacity: [0, 1, 1, 0],
+            y: -110,
+            x: note.drift,
+            scale: [0.4, 1.3, 1, 0.8],
+            rotate: note.tilt,
           }}
+          transition={{ duration: 1.6, ease: "easeOut", times: [0, 0.2, 0.7, 1] }}
+        >
+          {note.symbol}
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+function AuroraBackground() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <motion.div
+        className="absolute h-[700px] w-[700px] rounded-full blur-[140px]"
+        style={{ background: "#6ee7b7", opacity: 0.14 }}
+        initial={{ left: "0%", top: "0%" }}
+        animate={{
+          left: ["0%", "55%", "20%", "0%"],
+          top: ["5%", "55%", "30%", "5%"],
+        }}
+        transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute h-[600px] w-[600px] rounded-full blur-[140px]"
+        style={{ background: "#c4b5fd", opacity: 0.14 }}
+        initial={{ left: "55%", top: "50%" }}
+        animate={{
+          left: ["55%", "5%", "40%", "55%"],
+          top: ["55%", "15%", "45%", "55%"],
+        }}
+        transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute h-[500px] w-[500px] rounded-full blur-[140px]"
+        style={{ background: "#93c5fd", opacity: 0.1 }}
+        initial={{ left: "30%", top: "-10%" }}
+        animate={{
+          left: ["30%", "65%", "15%", "30%"],
+          top: ["-10%", "25%", "5%", "-10%"],
+        }}
+        transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
+      />
+    </div>
+  );
+}
+
+function Starfield() {
+  const stars = Array.from({ length: 32 }, (_, i) => ({
+    id: i,
+    left: (i * 37) % 100,
+    top: (i * 53) % 100,
+    delay: (i % 7) * 0.6,
+    duration: 2 + ((i * 13) % 30) / 10,
+  }));
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      {stars.map((s) => (
+        <motion.div
+          key={s.id}
+          className="absolute h-px w-px rounded-full bg-white"
+          style={{ left: `${s.left}%`, top: `${s.top}%`, boxShadow: "0 0 4px #fff" }}
+          animate={{ opacity: [0, 0.8, 0] }}
           transition={{
-            scaleX: { duration: 1.5, delay: 1.5 + i * 0.08, ease: "easeOut" },
-            y: {
-              duration: 0.15 + i * 0.04,
-              repeat: Infinity,
-              repeatType: "mirror",
-              ease: "easeInOut",
-              delay: 3 + i * 0.15,
-            },
+            duration: s.duration,
+            repeat: Infinity,
+            delay: s.delay,
+            ease: "easeInOut",
           }}
         />
       ))}
@@ -81,10 +264,11 @@ export default function HeroSection() {
       id="about"
       className="relative flex min-h-screen items-end overflow-hidden px-6 pb-24 pt-32 md:items-center md:pb-0 md:pt-0"
     >
-      <GuitarStrings />
+      <Starfield />
+      <InteractiveGuitarStrings />
 
-      {/* Ambient glow */}
-      <div className="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-[#c4b5fd]/8 blur-[120px]" />
+      {/* Vignette to deepen the edges */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_50%,rgba(0,0,0,0.55)_100%)]" />
 
       <div className="relative z-10 mx-auto w-full max-w-6xl">
         {/* Top row: tag + info pills */}
@@ -105,7 +289,17 @@ export default function HeroSection() {
         </motion.div>
 
         {/* Name - huge, left-aligned, staggered lines */}
-        <div className="mb-8">
+        <div className="mb-8 relative">
+          {/* Soft glow behind the name */}
+          <motion.div
+            className="pointer-events-none absolute -inset-x-8 -inset-y-6 -z-10 rounded-[40%] blur-3xl"
+            style={{
+              background:
+                "radial-gradient(ellipse at 30% 50%, rgba(110,231,183,0.18), transparent 60%), radial-gradient(ellipse at 70% 60%, rgba(196,181,253,0.18), transparent 60%)",
+            }}
+            animate={{ opacity: [0.55, 0.9, 0.55] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          />
           <motion.h1
             className="text-6xl font-bold tracking-tighter sm:text-8xl md:text-9xl lg:text-[10rem] leading-[0.85]"
             initial={{ opacity: 0 }}
@@ -117,6 +311,9 @@ export default function HeroSection() {
               initial={{ x: -80, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.4, ease }}
+              style={{
+                filter: "drop-shadow(0 0 30px rgba(110,231,183,0.25))",
+              }}
             >
               Callum
             </motion.span>
@@ -133,7 +330,6 @@ export default function HeroSection() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.4, delay: 1.2 }}
               >
-                .
               </motion.span>
             </motion.span>
           </motion.h1>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import NowPlayingTicker from "./NowPlayingTicker";
 
 const navLinks = [
   { label: "About", href: "#about" },
@@ -53,9 +54,12 @@ export default function Navbar() {
       transition={{ duration: 0.3 }}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <a href="#about" className="text-lg font-bold gradient-text">
-          C.
-        </a>
+        <div className="flex items-center gap-4">
+          <a href="#about" className="text-lg font-bold gradient-text">
+            C.
+          </a>
+          <NowPlayingTicker />
+        </div>
 
         {/* Desktop nav */}
         <div className="hidden gap-8 md:flex">

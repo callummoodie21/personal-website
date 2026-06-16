@@ -82,6 +82,73 @@ function InteractiveGuitarStrings() {
   const lastPluckTimes = useRef<number[]>(guitarStrings.map(() => 0));
 
   useEffect(() => {
+    const spawnNote = (i: number, s: (typeof guitarStrings)[number], x: number) => {
+      const stringY = ((30 + i * 8) / 100) * window.innerHeight;
+      const id = ++noteIdRef.current;
+      const note: FloatingNote = {
+        id,
+        x,
+        y: stringY,
+        symbol: s.symbol,
+        color: s.color,
+        drift: (Math.random() - 0.5) * 120,
+        tilt: (Math.random() - 0.5) * 50,
+      };
+      setNotes((n) => [...n, note]);
+      window.setTimeout(
+        () => setNotes((n) => n.filter((nn) => nn.id !== id)),
+        1800
+      );
+    };
+
+    const strumAll = (reverse = false) => {
+      const order = reverse
+        ? guitarStrings.map((_, i) => guitarStrings.length - 1 - i)
+        : guitarStrings.map((_, i) => i);
+      order.forEach((i, step) => {
+        window.setTimeout(() => {
+          const s = guitarStrings[i];
+          setPlucks((p) => {
+            const next = [...p];
+            next[i] = next[i] + 1;
+            return next;
+          });
+          for (let j = 0; j < 4; j++) {
+            const x = window.innerWidth * (0.15 + Math.random() * 0.7);
+            spawnNote(i, s, x);
+          }
+        }, step * 95);
+      });
+    };
+
+    const chordRef: { keys: string[]; timer: number | null } = { keys: [], timer: null };
+
+    const keyHandler = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable)) {
+        return;
+      }
+      if (e.key === "~" || e.key === "`") {
+        e.preventDefault();
+        strumAll();
+        window.setTimeout(() => strumAll(true), guitarStrings.length * 95 + 200);
+        return;
+      }
+      const k = e.key.toLowerCase();
+      if (!["g", "c", "d"].includes(k)) return;
+      chordRef.keys.push(k);
+      if (chordRef.timer !== null) window.clearTimeout(chordRef.timer);
+      chordRef.timer = window.setTimeout(() => {
+        chordRef.keys = [];
+      }, 1500);
+      if (chordRef.keys.slice(-3).join("") === "gcd") {
+        chordRef.keys = [];
+        strumAll();
+      }
+    };
+
+    window.addEventListener("keydown", keyHandler);
+
     const handler = (e: MouseEvent) => {
       const newY = e.clientY;
       const last = lastYRef.current;
@@ -121,7 +188,11 @@ function InteractiveGuitarStrings() {
       });
     };
     window.addEventListener("mousemove", handler);
-    return () => window.removeEventListener("mousemove", handler);
+    return () => {
+      window.removeEventListener("mousemove", handler);
+      window.removeEventListener("keydown", keyHandler);
+      if (chordRef.timer !== null) window.clearTimeout(chordRef.timer);
+    };
   }, []);
 
   return (

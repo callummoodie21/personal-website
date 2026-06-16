@@ -14,6 +14,7 @@ import { travelData } from "@/data/travel";
 import type { City } from "@/lib/types";
 import SectionWrapper from "./SectionWrapper";
 import ImageCarousel from "./ImageCarousel";
+import TravelCounter from "./TravelCounter";
 
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
@@ -56,7 +57,7 @@ export default function TravelMap() {
   return (
     <SectionWrapper id="travel">
       <div className="mx-auto max-w-6xl">
-        <motion.div variants={fadeInUp} className="mb-12">
+        <motion.div variants={fadeInUp} className="mb-8">
           <h2 className="mb-2 text-3xl font-bold sm:text-4xl">
             <span className="gradient-text">Travel</span>
           </h2>
@@ -64,6 +65,30 @@ export default function TravelMap() {
             Places I&apos;ve explored. Click a city marker to see pics I&apos;ve taken.
           </p>
         </motion.div>
+
+        <TravelCounter
+          stats={[
+            {
+              value: travelData.countries.length,
+              label: "Countries",
+              color: "#6ee7b7",
+            },
+            {
+              value: travelData.cities.length,
+              label: "Cities",
+              color: "#93c5fd",
+            },
+            {
+              value: travelData.cities.reduce(
+                (sum, c) => sum + c.images.length,
+                0
+              ),
+              label: "Photos",
+              color: "#c4b5fd",
+              suffix: "+",
+            },
+          ]}
+        />
 
         <motion.div
           variants={fadeInUp}
